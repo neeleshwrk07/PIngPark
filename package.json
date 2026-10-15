@@ -1,0 +1,12 @@
+{
+  "name": "parkping-smart-parking-qr",
+  "version": "1.0.0",
+  "description": "ParkPing - Next-Gen Smart QR Parking & Micro-Mobility Platform",
+  "private": true,
+  "scripts": {
+    "start": "node server/server.js",
+    "dev:server": "node --watch server/server.js",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd client && npm run build"
+  }
+}
