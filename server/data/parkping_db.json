@@ -72,6 +72,20 @@
   ],
   "pings": [
     {
+      "id": "png-743838",
+      "vehicleId": "veh-1",
+      "vehiclePlate": "DL-01-AB-1234",
+      "ownerName": "Aarav Sharma",
+      "timestamp": "2026-10-16T16:05:43.838Z",
+      "reason": "BLOCKING_CAR",
+      "reasonLabel": "🚨 Blocking My Car / Need to Move",
+      "senderNote": "Car blocked near bay 4. Please move!",
+      "senderContact": "+91 99999 88888",
+      "status": "owner_on_the_way",
+      "ownerReply": "Coming down now (2 mins)!",
+      "repliedAt": "2026-10-16T16:05:43.842Z"
+    },
+    {
       "id": "png-093860",
       "vehicleId": "veh-1",
       "vehiclePlate": "DL-01-AB-1234",

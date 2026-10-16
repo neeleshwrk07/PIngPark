@@ -98,7 +98,7 @@ function generateInitialData() {
   return { vehicles, pings };
 }
 
-class ParkPingStore {
+class PingParkStore {
   constructor() {
     this.data = null;
     this.subscribers = new Set();
@@ -115,7 +115,7 @@ class ParkPingStore {
         this.save();
       }
     } catch (err) {
-      console.warn('Could not read existing ParkPing DB, generating fresh seed:', err.message);
+      console.warn('Could not read existing PingPark DB, generating fresh seed:', err.message);
       this.data = generateInitialData();
       this.save();
     }
@@ -309,4 +309,4 @@ class ParkPingStore {
   }
 }
 
-export const dbStore = new ParkPingStore();
+export const dbStore = new PingParkStore();

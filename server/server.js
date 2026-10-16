@@ -58,7 +58,7 @@ function getLanIp() {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    app: 'ParkPing - Windshield QR Vehicle Contact System',
+    app: 'PingPark - Windshield QR Vehicle Contact System',
     version: '3.1.0',
     mongoConnected,
     lanIp: getLanIp(),
@@ -86,7 +86,7 @@ app.get('/api/events', (req, res) => {
   res.flushHeaders();
 
   dbStore.addSubscriber(res);
-  res.write(`data: ${JSON.stringify({ type: 'CONNECTED', message: 'ParkPing live telemetry ready' })}\n\n`);
+  res.write(`data: ${JSON.stringify({ type: 'CONNECTED', message: 'PingPark live telemetry ready' })}\n\n`);
 
   // Heartbeat to prevent socket timeouts
   const heartbeat = setInterval(() => {
@@ -247,7 +247,7 @@ app.get('*', (req, res) => {
   }
   res.sendFile(path.join(clientDist, 'index.html'), (err) => {
     if (err) {
-      res.status(200).send('ParkPing API is online. Client build is compiling...');
+      res.status(200).send('PingPark API is online. Client build is compiling...');
     }
   });
 });
@@ -257,7 +257,7 @@ function startServer(portToTry) {
   const lanIp = getLanIp();
   const srv = app.listen(portToTry, '0.0.0.0', () => {
     console.log(`\n======================================================`);
-    console.log(`🚀 ParkPing Server is LIVE!`);
+    console.log(`🚀 PingPark Server is LIVE!`);
     console.log(`💻 Local access:        http://localhost:${portToTry}`);
     console.log(`📱 Mobile camera scan:  http://${lanIp}:${portToTry}`);
     console.log(`📡 Real-Time SSE:       http://localhost:${portToTry}/api/events`);

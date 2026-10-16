@@ -1,8 +1,8 @@
 @echo off
-title ParkPing - Smart Parking QR Platform
+title PingPark - Smart Parking QR Platform
 
 echo ===================================================================
-echo             PARKPING - SMART QR PARKING ECOSYSTEM
+echo             PINGPARK - SMART QR PARKING PLATFORM
 echo ===================================================================
 echo [1/3] Checking environment...
 
@@ -21,7 +21,7 @@ echo [2/3] Checking network ports...
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5000') do taskkill /f /pid %%a >nul 2>nul
 
 
-echo [3/3] Starting ParkPing Server...
+echo [3/3] Starting PingPark Server...
 echo.
 echo ===================================================================
 echo   Web App is live at: http://localhost:5000

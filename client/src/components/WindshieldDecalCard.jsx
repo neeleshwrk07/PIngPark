@@ -24,7 +24,7 @@ import { useParkPing } from '../context/ParkPingContext';
 export const WindshieldDecalCard = () => {
   const { selectedVehicle, updateVehicle, deleteVehicle, openScannerForVehicle, networkInfo } = useParkPing();
   const [qrDataUrl, setQrDataUrl] = useState('');
-  const [activeTheme, setActiveTheme] = useState('cyber');
+  const [activeTheme, setActiveTheme] = useState('gold');
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [statusNoteText, setStatusNoteText] = useState('');
   const [qrHostMode, setQrHostMode] = useState('wifi'); // 'wifi' | 'localhost'
@@ -33,7 +33,7 @@ export const WindshieldDecalCard = () => {
   useEffect(() => {
     if (!selectedVehicle) return;
     setStatusNoteText(selectedVehicle.statusNote || '');
-    setActiveTheme(selectedVehicle.decalStyle || 'cyber');
+    setActiveTheme(selectedVehicle.decalStyle || 'gold');
 
     // Determine target host based on mode (Wi-Fi LAN IP vs localhost)
     let baseUrl = window.location.origin;
@@ -46,7 +46,7 @@ export const WindshieldDecalCard = () => {
       width: 280,
       margin: 1,
       color: {
-        dark: activeTheme === 'minimal' ? '#000000' : '#090e17',
+        dark: activeTheme === 'minimal' ? '#000000' : '#12131a',
         light: '#ffffff'
       }
     }).then(url => setQrDataUrl(url)).catch(() => {});
@@ -78,31 +78,44 @@ export const WindshieldDecalCard = () => {
     window.print();
   };
 
+  const handleDownloadPng = () => {
+    if (!qrDataUrl) return;
+    const a = document.createElement('a');
+    a.href = qrDataUrl;
+    a.download = `PingPark-Decal-${selectedVehicle.plateNumber}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    try {
+      confetti({ particleCount: 40, spread: 50 });
+    } catch (e) {}
+  };
+
   const handleDelete = () => {
     if (window.confirm(`Are you sure you want to remove ${selectedVehicle.plateNumber} from your garage?`)) {
       deleteVehicle(selectedVehicle.id);
     }
   };
 
-  // Visual decal themes
+  // Visual decal themes (Yellowish Palette)
   const themes = {
-    cyber: {
-      border: 'border-emerald-500/50 shadow-emerald-500/20',
-      headerBg: 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950',
-      badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-      accent: 'text-emerald-400'
-    },
-    neon: {
-      border: 'border-cyan-500/50 shadow-cyan-500/20',
-      headerBg: 'bg-gradient-to-r from-cyan-500 to-purple-500 text-slate-950',
-      badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-      accent: 'text-cyan-400'
+    gold: {
+      border: 'border-amber-400/80 shadow-amber-500/25',
+      headerBg: 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950',
+      badge: 'bg-amber-400/20 text-amber-300 border-amber-400/40',
+      accent: 'text-amber-400'
     },
     hazard: {
-      border: 'border-amber-500/50 shadow-amber-500/20',
-      headerBg: 'bg-gradient-to-r from-amber-400 to-rose-500 text-slate-950',
-      badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-      accent: 'text-amber-400'
+      border: 'border-yellow-400 shadow-yellow-500/25',
+      headerBg: 'bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 text-slate-950 font-black',
+      badge: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40',
+      accent: 'text-yellow-400'
+    },
+    honey: {
+      border: 'border-amber-500/60 shadow-amber-500/20',
+      headerBg: 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 font-bold',
+      badge: 'bg-amber-500/20 text-amber-200 border-amber-500/40',
+      accent: 'text-amber-300'
     },
     minimal: {
       border: 'border-slate-500/40 shadow-slate-500/10',
@@ -112,7 +125,7 @@ export const WindshieldDecalCard = () => {
     }
   };
 
-  const currentStyle = themes[activeTheme] || themes.cyber;
+  const currentStyle = themes[activeTheme] || themes.gold;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -122,7 +135,7 @@ export const WindshieldDecalCard = () => {
         
         <div className="text-xs text-slate-400 mb-2 flex items-center justify-between w-full max-w-sm px-1">
           <div className="flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>Windshield Decal Preview</span>
           </div>
 
@@ -132,23 +145,23 @@ export const WindshieldDecalCard = () => {
               onClick={() => setQrHostMode('wifi')}
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-semibold transition-all ${
                 qrHostMode === 'wifi' 
-                  ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30' 
+                  ? 'bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30' 
                   : 'text-slate-400 hover:text-white'
               }`}
-              title="QR code encodes your Wi-Fi LAN IP (e.g. 192.168.x.x) so real mobile phone cameras can scan and connect"
+              title="QR code encodes your Wi-Fi LAN IP so real phone cameras can scan and connect"
             >
-              <Wifi className="w-3 h-3 text-cyan-400" />
+              <Wifi className="w-3 h-3 text-amber-400" />
               <span>Mobile Wi-Fi</span>
             </button>
             <button
               onClick={() => setQrHostMode('localhost')}
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-semibold transition-all ${
                 qrHostMode === 'localhost' 
-                  ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30' 
+                  ? 'bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Laptop className="w-3 h-3 text-emerald-400" />
+              <Laptop className="w-3 h-3 text-amber-400" />
               <span>Local</span>
             </button>
           </div>
@@ -166,7 +179,7 @@ export const WindshieldDecalCard = () => {
         >
           {/* Top Decal Banner */}
           <div className={`windshield-decal-header ${currentStyle.headerBg} p-4 text-center font-black tracking-wide`}>
-            <div className="text-[11px] uppercase tracking-widest font-mono">PARKPING VERIFIED DECAL</div>
+            <div className="text-[11px] uppercase tracking-widest font-mono">PINGPARK VERIFIED DECAL</div>
             <div className="text-sm sm:text-base font-black font-['Space_Grotesk'] mt-0.5">
               BLOCKED BY THIS CAR?
             </div>
@@ -188,8 +201,8 @@ export const WindshieldDecalCard = () => {
             </div>
 
             {/* License Plate Graphic */}
-            <div className="border-2 border-slate-700 bg-slate-950 px-4 py-1.5 rounded-xl font-mono text-lg font-black text-white tracking-widest flex items-center gap-2 shadow-inner">
-              <span className="text-xs text-cyan-400 font-sans font-bold">IND</span>
+            <div className="border-2 border-amber-500/40 bg-slate-950 px-4 py-1.5 rounded-xl font-mono text-lg font-black text-white tracking-widest flex items-center gap-2 shadow-inner">
+              <span className="text-xs text-amber-400 font-sans font-bold">IND</span>
               <span>{selectedVehicle.plateNumber}</span>
             </div>
 
@@ -201,17 +214,17 @@ export const WindshieldDecalCard = () => {
             <div className="mt-3">
               {selectedVehicle.parkingStatus === 'blocking' ? (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold animate-pulse">
-                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
                   <span>Double-Parked (Available on Call)</span>
                 </div>
               ) : selectedVehicle.parkingStatus === 'valet' ? (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-bold">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 text-xs font-bold">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-yellow-400" />
                   <span>Keys with Security Guard</span>
                 </div>
               ) : (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
                   <span>Parked in Safe Regular Bay</span>
                 </div>
               )}
@@ -219,27 +232,38 @@ export const WindshieldDecalCard = () => {
           </div>
 
           {/* Bottom Decal Footer */}
-          <div className="bg-slate-950 p-3 text-center border-t border-slate-800/80 text-[10px] text-slate-500 font-mono">
-            SECURE VEHICLE CONTACT • ZERO APP DOWNLOAD NEEDED
+          <div className="bg-slate-950 p-3 text-center border-t border-slate-800/80 text-[10px] text-amber-400/80 font-mono">
+            PINGPARK SECURE SMART DECAL • ZERO APP DOWNLOAD
           </div>
         </div>
 
-        {/* Print / Action Buttons */}
-        <div className="flex items-center gap-3 mt-4 w-full max-w-sm">
+        {/* Action Buttons: Print, Download, Test Scanner */}
+        <div className="grid grid-cols-3 gap-2 mt-4 w-full max-w-sm">
           <button
             onClick={handlePrint}
-            className="flex-1 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95"
+            className="py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95"
+            title="Print decal sticker with cutting guide lines"
           >
             <Printer className="w-4 h-4 text-slate-950" />
-            <span>Print Decal Sticker</span>
+            <span>Print</span>
+          </button>
+
+          <button
+            onClick={handleDownloadPng}
+            className="py-3 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 border border-amber-500/30 transition-all hover:scale-105 active:scale-95 shadow-md"
+            title="Download QR code image as PNG"
+          >
+            <Download className="w-4 h-4 text-amber-400" />
+            <span>Save PNG</span>
           </button>
 
           <button
             onClick={() => openScannerForVehicle(selectedVehicle)}
-            className="flex-1 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all hover:scale-105 active:scale-95"
+            className="py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-700 transition-all hover:scale-105 active:scale-95"
+            title="Test the mobile scanner interface"
           >
-            <Smartphone className="w-4 h-4" />
-            <span>Test Scanner View</span>
+            <Smartphone className="w-4 h-4 text-amber-400" />
+            <span>Scanner</span>
           </button>
         </div>
 
@@ -252,7 +276,7 @@ export const WindshieldDecalCard = () => {
         <div className="glass-panel p-6 rounded-3xl border-slate-800">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-black text-white font-['Space_Grotesk'] flex items-center gap-2">
-              <Car className="w-5 h-5 text-emerald-400" />
+              <Car className="w-5 h-5 text-amber-400" />
               <span>Current Parking Situation</span>
             </h3>
             <button
@@ -269,9 +293,9 @@ export const WindshieldDecalCard = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-5">
             {[
-              { id: 'blocking', label: 'Double-Parked', desc: 'Blocked someone; ready to move', icon: AlertTriangle, color: 'border-amber-500/60 bg-amber-950/30 text-amber-300' },
-              { id: 'safe', label: 'Safe Bay', desc: 'Parked legally in stall', icon: CheckCircle2, color: 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300' },
-              { id: 'valet', label: 'Key with Guard', desc: 'Guard can move car', icon: ShieldCheck, color: 'border-cyan-500/60 bg-cyan-950/30 text-cyan-300' },
+              { id: 'blocking', label: 'Double-Parked', desc: 'Blocked someone; ready to move', icon: AlertTriangle, color: 'border-amber-400/80 bg-amber-950/40 text-amber-300' },
+              { id: 'safe', label: 'Safe Bay', desc: 'Parked legally in stall', icon: CheckCircle2, color: 'border-yellow-400/80 bg-yellow-950/40 text-yellow-300' },
+              { id: 'valet', label: 'Key with Guard', desc: 'Guard can move car', icon: ShieldCheck, color: 'border-amber-500/70 bg-amber-950/30 text-amber-200' },
             ].map(st => {
               const Icon = st.icon;
               const isSelected = selectedVehicle.parkingStatus === st.id;
@@ -281,7 +305,7 @@ export const WindshieldDecalCard = () => {
                   onClick={() => handleStatusChange(st.id)}
                   className={`p-3 rounded-2xl border text-left transition-all ${
                     isSelected 
-                      ? `${st.color} font-bold shadow-md scale-105` 
+                      ? `${st.color} font-bold shadow-lg scale-105` 
                       : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white'
                   }`}
                 >
@@ -297,13 +321,13 @@ export const WindshieldDecalCard = () => {
           <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                <Edit3 className="w-3.5 h-3.5 text-emerald-400" />
+                <Edit3 className="w-3.5 h-3.5 text-amber-400" />
                 <span>Live Note to Blocked Drivers:</span>
               </span>
               {!isEditingNote && (
                 <button
                   onClick={() => setIsEditingNote(true)}
-                  className="text-[11px] text-cyan-400 hover:underline font-semibold"
+                  className="text-[11px] text-amber-400 hover:underline font-semibold"
                 >
                   Edit Note
                 </button>
@@ -316,7 +340,7 @@ export const WindshieldDecalCard = () => {
                   value={statusNoteText}
                   onChange={(e) => setStatusNoteText(e.target.value)}
                   rows="2"
-                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-emerald-500 outline-none"
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-amber-400 outline-none"
                   placeholder="e.g. Parked for 10 mins near Tower 3. Call or ping me and I'll come down!"
                 />
                 <div className="flex justify-end gap-2">
@@ -328,7 +352,7 @@ export const WindshieldDecalCard = () => {
                   </button>
                   <button
                     onClick={handleSaveNote}
-                    className="px-4 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs"
+                    className="px-4 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs"
                   >
                     Save Note
                   </button>
@@ -345,15 +369,15 @@ export const WindshieldDecalCard = () => {
         {/* Sticker Theme Customizer */}
         <div className="glass-panel p-6 rounded-3xl border-slate-800">
           <h3 className="text-sm font-black text-white font-['Space_Grotesk'] mb-3 flex items-center gap-2">
-            <Palette className="w-4 h-4 text-cyan-400" />
+            <Palette className="w-4 h-4 text-amber-400" />
             <span>Customize Decal Sticker Style</span>
           </h3>
 
           <div className="flex flex-wrap gap-2">
             {[
-              { id: 'cyber', label: 'Cyber Emerald', dot: 'bg-emerald-400' },
-              { id: 'neon', label: 'Neon Cyan & Purple', dot: 'bg-cyan-400' },
-              { id: 'hazard', label: 'Amber Caution', dot: 'bg-amber-400' },
+              { id: 'gold', label: 'Bumblebee Gold', dot: 'bg-amber-400' },
+              { id: 'hazard', label: 'Caution Yellow', dot: 'bg-yellow-400' },
+              { id: 'honey', label: 'Warm Honey', dot: 'bg-amber-600' },
               { id: 'minimal', label: 'Monochrome Clean', dot: 'bg-white' },
             ].map(thm => (
               <button
@@ -364,7 +388,7 @@ export const WindshieldDecalCard = () => {
                 }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs border transition-all ${
                   activeTheme === thm.id
-                    ? 'border-emerald-400 bg-emerald-500/20 text-white font-bold'
+                    ? 'border-amber-400 bg-amber-400/20 text-white font-bold shadow-md'
                     : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white'
                 }`}
               >

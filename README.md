@@ -1,11 +1,11 @@
-# 🚗 ParkPing — Smart Windshield QR & Double-Parking Alert Platform
+# 🚗 PingPark — Smart Windshield QR & Double-Parking Alert Platform
 > **Hackathon Edition • Full MERN Stack Solution**  
 > *Ending the double-parking deadlock: Stick a smart QR decal on your windshield. If someone is blocked by your car, they scan to buzz, call, or WhatsApp you in seconds.*
 
-[![MERN Stack](https://img.shields.io/badge/Stack-MongoDB%20%7C%20Express%20%7C%20React%2018%20%7C%20Node.js-10b981?style=for-the-badge)](https://nodejs.org)
-[![Real-Time Telemetry](https://img.shields.io/badge/Alerts-Server--Sent%20Events%20(SSE)-06b6d4?style=for-the-badge)](http://localhost:5000/api/events)
+[![MERN Stack](https://img.shields.io/badge/Stack-MongoDB%20%7C%20Express%20%7C%20React%2018%20%7C%20Node.js-f59e0b?style=for-the-badge)](https://nodejs.org)
+[![Real-Time Telemetry](https://img.shields.io/badge/Alerts-Server--Sent%20Events%20(SSE)-eab308?style=for-the-badge)](http://localhost:5000/api/events)
 [![Audio Siren](https://img.shields.io/badge/Web%20Audio-Horn%20Siren%20Synthesizer-f59e0b?style=for-the-badge)](#)
-[![Zero-App Scanner](https://img.shields.io/badge/Scanner-Zero%20App%20Required-8b5cf6?style=for-the-badge)](#)
+[![Zero-App Scanner](https://img.shields.io/badge/Scanner-Zero%20App%20Required-facc15?style=for-the-badge)](#)
 
 ---
 
@@ -16,13 +16,13 @@ In crowded parking lots, apartment basements, hospitals, markets, and office com
 - Leaving handwritten phone numbers on slips of paper leads to **privacy leaks, harassment, and spam calls** (especially for female drivers).
 - Frustrated trapped drivers often resort to road rage, calling tow trucks, or property damage.
 
-## 💡 The ParkPing Solution
+## 💡 The PingPark Solution
 1. **Smart Windshield QR Decal**: Car owners register their license plate number and print a weatherproof QR decal to stick on the inside of their front windshield.
 2. **Zero-App Scanner**: When a blocked driver finds their exit blocked, they point their native phone camera at the decal. No app installation needed.
-3. **1-Tap Move Siren or Direct Call**: The blocked driver can:
+3. **1-Tap Move Siren, Direct Call, SMS & WhatsApp**: The blocked driver can:
    - Tap **"Buzz Owner to Move Car"** (triggers an instant high-priority car horn siren alert on the owner's device).
-   - Tap **"Call Owner"** or **"WhatsApp"** with pre-filled details.
-   - Choose alert presets: *"Car Blocked"*, *"Headlights Left ON"*, *"Window Down"*, *"Tow Alert"*.
+   - Tap **"Call Owner"**, **"WhatsApp"**, or **"SMS"** with pre-filled details.
+   - Choose alert presets: *"Car Blocked"*, *"Headlights Left ON"*, *"Window Down"*, *"Pet / Child Inside Car"*, *"Tow Alert"*, *"Scratch Emergency"*.
 4. **Privacy Shield**: Owners can mask their raw phone number and receive instant anonymous in-app siren alerts.
 5. **Real-Time "On My Way" Replies**: The owner taps 1 button: *"🏃 Coming down right now (2 mins)!"*. The blocked driver's screen immediately flashes with confirmation and confetti, eliminating anxiety.
 
@@ -47,7 +47,7 @@ This script automatically:
 ## 🎮 Key Interactive Features to Demo for Hackathon Judges
 
 1. **Split-Screen Dual Device Simulator**:
-   - Click **"Split-Screen Simulator"** in the top navigation bar.
+   - Click **"Split Simulator"** in the top navigation bar.
    - Watch the dual-phone mockup:
      - **Left Phone**: Blocked driver scanning the windshield and tapping *"🚨 Buzz Owner to Move Car"*.
      - **Right Phone**: Car owner receiving the siren alert in sub-second latency via Server-Sent Events (SSE) and tapping *"🏃 Coming down now (2 mins)"*.
@@ -56,19 +56,19 @@ This script automatically:
    - Preview realistic windshield glass stickers with dynamic QR codes, license plate badges, and parking status indicators.
    - Switch parking situations: **"Double-Parked (Available on call)"**, **"Safe Bay"**, or **"Keys with Guard"**.
    - Edit live notes for blocked drivers (*"Parked near Tower 3 picking up parcel. Ping me!"*).
-   - Switch themes: Cyber Emerald, Neon Cyan, Amber Hazard, or Monochrome Clean.
-   - Click **"Print Decal Sticker"** to print or export.
+   - Switch themes: Bumblebee Gold, Caution Yellow, Warm Honey, or Monochrome Clean.
+   - Click **"Print"** (uses print CSS to print only the sticker) or **"Save PNG"** (downloads the sticker image file).
 3. **Audio Siren Synthesizer**:
    - Uses native Web Audio API (zero external audio files) to play authentic vehicle horn buzzers and chimes when an alert arrives.
 4. **Interactive 6-Slide Pitch Deck**:
    - Click **"Pitch Deck"** in the top navbar to showcase the presentation built specifically for judges.
-   - Covers: The Crisis, The Solution, MERN + SSE Architecture, User Journey, and Business Model (D2C decals, housing societies, valet lots).
+   - Covers: The Crisis, The Solution, MERN + SSE Architecture, User Journey, and Business Model (D2C decals, housing societies, valet lots, Smart City CCTV ALPR auto-ping).
    - Use keyboard arrows (Left/Right) or navigation buttons to present.
 
 ---
 
 ## 🛠️ Technology Stack
-- **Frontend**: React 18, Vite, Tailwind CSS, Lucide Icons, Canvas Confetti, Web Audio API Synthesizer.
+- **Frontend**: React 18, Vite, Tailwind CSS (Yellowish Amber Theme), Lucide Icons, Canvas Confetti, Web Audio API Synthesizer.
 - **Backend**: Node.js, Express.js, Server-Sent Events (SSE) for low-latency live broadcast, Dynamic QR Code generator (`qrcode`).
 - **Data Layer**: High-speed resilient JSON store with MongoDB / Mongoose support (operates 100% out of the box with zero external daemon requirements).
 
@@ -77,7 +77,7 @@ This script automatically:
 ## 📁 Project Directory Structure
 ```
 E:\ParkPing\
-├── client\                  # React 18 + Vite Frontend
+├── client\                  # React 18 + Vite Frontend (Yellowish Theme)
 │   ├── src\
 │   │   ├── components\
 │   │   │   ├── Navbar.jsx                # Header with car selector & controls

@@ -60,7 +60,7 @@ export default function App() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-black font-['Space_Grotesk'] text-white flex items-center gap-2">
-                    <QrCode className="w-5 h-5 text-emerald-400" />
+                    <QrCode className="w-5 h-5 text-amber-400" />
                     <span>Smart Windshield Decal Studio</span>
                   </h2>
                   <p className="text-xs text-slate-400">
@@ -71,7 +71,7 @@ export default function App() {
                 {selectedVehicle && (
                   <button
                     onClick={() => openScannerForVehicle(selectedVehicle)}
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 text-xs font-semibold transition-all hover:scale-105"
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all hover:scale-105"
                   >
                     <span>Simulate Scan</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -92,18 +92,18 @@ export default function App() {
           </div>
         </section>
 
-        {/* How It Solves Double-Parking: 4 Step Walkthrough */}
+        {/* How PingPark Solves Double-Parking: 4 Step Walkthrough */}
         <section className="px-4 lg:px-8 max-w-7xl mx-auto my-12">
           <div className="glass-panel p-8 sm:p-10 rounded-3xl border-slate-800 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -z-10"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl -z-10"></div>
             
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-3">
-                <Sparkles className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>The Frictionless Workflow</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-white">
-                How ParkPing Clears Blocked Cars in &lt;3 Minutes
+                How PingPark Clears Blocked Cars in &lt;3 Minutes
               </h2>
               <p className="text-xs sm:text-sm text-slate-400 mt-2">
                 No phone number scribbles on paper. No app download for the blocked person. Instant real-time communication.
@@ -112,8 +112,8 @@ export default function App() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   1
                 </div>
                 <div className="font-bold text-white text-sm">Stick QR on Windshield</div>
@@ -122,8 +122,8 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-yellow-400/50 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-yellow-400/20 text-yellow-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   2
                 </div>
                 <div className="font-bold text-white text-sm">Blocked Driver Scans</div>
@@ -132,18 +132,18 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-500/40 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   3
                 </div>
                 <div className="font-bold text-white text-sm">Instant Siren Buzz / Call</div>
                 <p className="text-xs text-slate-400 mt-1">
-                  Tap 1 button to sound urgent horn siren on owner device, or tap direct WhatsApp / phone call.
+                  Tap 1 button to sound urgent horn siren on owner device, or tap direct WhatsApp, phone call or SMS.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-purple-500/40 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-yellow-400/50 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-300 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   4
                 </div>
                 <div className="font-bold text-white text-sm">"On My Way in 2 Mins"</div>
@@ -160,32 +160,32 @@ export default function App() {
         <section className="px-4 lg:px-8 max-w-7xl mx-auto my-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             
-            <div className="glass-card p-5 rounded-2xl text-center">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-emerald-400">
+            <div className="glass-card p-5 rounded-2xl text-center border-amber-500/20">
+              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-amber-400">
                 {vehicles.length}
               </div>
               <div className="text-xs font-semibold text-slate-300 mt-1">Registered Vehicles</div>
               <div className="text-[10px] text-slate-500">Active Windshield Decals</div>
             </div>
 
-            <div className="glass-card p-5 rounded-2xl text-center">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-cyan-400">
+            <div className="glass-card p-5 rounded-2xl text-center border-yellow-500/20">
+              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-yellow-400">
                 {analytics ? analytics.totalPings : activePings.length}
               </div>
               <div className="text-xs font-semibold text-slate-300 mt-1">Move Alerts Sent</div>
               <div className="text-[10px] text-slate-500">Real-Time Dispatch</div>
             </div>
 
-            <div className="glass-card p-5 rounded-2xl text-center">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-amber-400">
+            <div className="glass-card p-5 rounded-2xl text-center border-amber-500/20">
+              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-amber-300">
                 &lt; 90s
               </div>
               <div className="text-xs font-semibold text-slate-300 mt-1">Avg Resolution Time</div>
               <div className="text-[10px] text-slate-500">vs 1-2 Hours Honking</div>
             </div>
 
-            <div className="glass-card p-5 rounded-2xl text-center">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-purple-400">
+            <div className="glass-card p-5 rounded-2xl text-center border-yellow-500/20">
+              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-yellow-300">
                 100%
               </div>
               <div className="text-xs font-semibold text-slate-300 mt-1">Driver Privacy</div>
@@ -206,11 +206,11 @@ export default function App() {
       <footer className="border-t border-slate-800/80 glass-panel py-8 px-4 lg:px-8 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+            <div className="w-6 h-6 rounded-lg bg-amber-400/20 text-amber-400 flex items-center justify-center font-bold">
               <QrCode className="w-3.5 h-3.5" />
             </div>
-            <span className="font-bold text-slate-300 font-['Space_Grotesk']">ParkPing</span>
-            <span>• Smart Windshield QR & Move-Car Alert Ecosystem</span>
+            <span className="font-bold text-slate-200 font-['Space_Grotesk']">PingPark</span>
+            <span>• Smart Windshield QR & Double-Parking Alert Platform</span>
           </div>
 
           <div className="flex items-center gap-3 text-[11px] text-slate-400">
@@ -236,19 +236,19 @@ export default function App() {
             key={t.id}
             className={`pointer-events-auto p-4 rounded-2xl glass-panel-glow text-white shadow-2xl flex items-start gap-3 border animate-fadeIn transition-all ${
               t.type === 'success' 
-                ? 'border-emerald-500/60 bg-emerald-950/80 text-emerald-200 shadow-emerald-500/20' 
+                ? 'border-amber-400/80 bg-amber-950/80 text-amber-100 shadow-amber-500/25' 
                 : t.type === 'error'
-                ? 'border-rose-500/60 bg-rose-950/80 text-rose-200 shadow-rose-500/20'
+                ? 'border-rose-500/70 bg-rose-950/80 text-rose-200 shadow-rose-500/20'
                 : t.type === 'warning'
-                ? 'border-amber-500/60 bg-amber-950/80 text-amber-200 shadow-amber-500/20'
-                : 'border-cyan-500/60 bg-cyan-950/80 text-cyan-200 shadow-cyan-500/20'
+                ? 'border-yellow-400/70 bg-yellow-950/80 text-yellow-200 shadow-yellow-500/20'
+                : 'border-amber-500/70 bg-slate-900/90 text-amber-200 shadow-amber-500/20'
             }`}
           >
             <div className="mt-0.5 shrink-0">
-              {t.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+              {t.type === 'success' && <CheckCircle2 className="w-4 h-4 text-amber-400" />}
               {t.type === 'error' && <XCircle className="w-4 h-4 text-rose-400" />}
-              {t.type === 'warning' && <AlertCircle className="w-4 h-4 text-amber-400" />}
-              {t.type === 'info' && <Info className="w-4 h-4 text-cyan-400" />}
+              {t.type === 'warning' && <AlertCircle className="w-4 h-4 text-yellow-400" />}
+              {t.type === 'info' && <Info className="w-4 h-4 text-amber-300" />}
             </div>
             <div>
               <div className="font-bold text-xs">{t.title}</div>
