@@ -57,7 +57,7 @@ export default function App() {
       )}
 
       {/* Top Sticky Header */}
-      <Navbar onReplayIntro={() => setShowStarter(true)} />
+      <Navbar onReplayIntro={() => setShowStarter(true)} onSelectTab={setActiveTab} activeTab={activeTab} />
 
       {/* Main Page Content */}
       <main className="flex-1 pb-16">
@@ -66,31 +66,31 @@ export default function App() {
         <HeroBanner onSelectTab={setActiveTab} />
 
         {/* Clean Workspace Tabs (Keeps the Home Page Minimal, Spacious & Uncluttered) */}
-        <section className="px-4 lg:px-8 max-w-7xl mx-auto mt-2 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <section className="px-4 lg:px-8 max-w-7xl mx-auto mt-2 mb-8">
+          <div className="glass-panel p-2 rounded-2xl flex flex-wrap items-center justify-between gap-3 border-white/10 shadow-xl">
             
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <button
                 onClick={() => setActiveTab('decal')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'decal'
-                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                    ? 'glow-btn-yellow scale-105'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <QrCode className="w-4 h-4" />
+                <QrCode className="w-3.5 h-3.5" />
                 <span>My Decal Studio</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('alerts')}
-                className={`relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'alerts'
-                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                    ? 'glow-btn-yellow scale-105'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <BellRing className="w-4 h-4" />
+                <BellRing className="w-3.5 h-3.5" />
                 <span>Live Move Requests</span>
                 {unresolvedPings.length > 0 && (
                   <span className="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
@@ -101,48 +101,48 @@ export default function App() {
 
               <button
                 onClick={() => setActiveTab('simulator')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'simulator'
-                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                    ? 'glow-btn-yellow scale-105'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Columns className="w-4 h-4" />
+                <Columns className="w-3.5 h-3.5" />
                 <span>Dual Simulator</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('steps')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'steps'
-                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                    ? 'glow-btn-yellow scale-105'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <HelpCircle className="w-4 h-4" />
+                <HelpCircle className="w-3.5 h-3.5" />
                 <span>How It Works</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('metrics')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'metrics'
-                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                    ? 'glow-btn-yellow scale-105'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <BarChart3 className="w-4 h-4" />
+                <BarChart3 className="w-3.5 h-3.5" />
                 <span>Live Metrics</span>
               </button>
             </div>
 
             {/* Quick action button for judges */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pr-2">
               <button
                 onClick={() => openModal('pitchDeck')}
-                className="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1.5 bg-amber-400/10 hover:bg-amber-400/20 px-3 py-1.5 rounded-xl border border-amber-400/30 transition-all"
+                className="text-xs text-amber-300 hover:text-amber-200 font-bold flex items-center gap-1.5 bg-amber-400/10 hover:bg-amber-400/20 px-3.5 py-1.5 rounded-xl border border-amber-400/30 transition-all cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Hackathon Pitch Deck</span>
               </button>
             </div>

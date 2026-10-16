@@ -12,11 +12,13 @@ import {
   Smartphone,
   AlertTriangle,
   Camera,
-  Sparkles
+  Sparkles,
+  Layers,
+  HelpCircle
 } from 'lucide-react';
 import { useParkPing } from '../context/ParkPingContext';
 
-export const Navbar = ({ onReplayIntro }) => {
+export const Navbar = ({ onReplayIntro, onSelectTab, activeTab }) => {
   const { 
     vehicles, 
     selectedVehicle,
@@ -34,124 +36,107 @@ export const Navbar = ({ onReplayIntro }) => {
   const unresolvedPings = activePings.filter(p => p.status === 'delivered');
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-amber-500/20 px-4 lg:px-8 py-3.5 transition-all">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <header className="sticky top-4 z-40 w-full px-4 lg:px-8 mb-4 pointer-events-none">
+      <div className="max-w-7xl mx-auto glass-pill-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-4 pointer-events-auto transition-all">
         
         {/* Brand Logo: PingPark */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 shadow-lg shadow-amber-500/25 text-slate-950 font-black">
-            <QrCode className="w-6 h-6 text-slate-950 stroke-[2.4]" />
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 shadow-md shadow-amber-500/30 text-slate-950 font-black">
+            <QrCode className="w-5 h-5 text-slate-950 stroke-[2.4]" />
+            <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-400"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
             </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-black tracking-tight text-white font-['Space_Grotesk']">
-                PING<span className="text-amber-400">PARK</span>
-              </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30">
-                WINDSHIELD QR
-              </span>
-            </div>
-            <div className="text-xs text-slate-400 flex items-center gap-2">
-              <span>Smart Car Contact & Move Alert</span>
-              {unresolvedPings.length > 0 && (
-                <span className="text-rose-400 font-bold flex items-center gap-1 animate-pulse">
-                  • 🚨 {unresolvedPings.length} Active Move Request!
-                </span>
-              )}
-            </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-black tracking-tight text-white font-['Space_Grotesk']">
+              PING<span className="text-amber-400">PARK</span>
+            </span>
+            <span className="hidden sm:inline-block text-[10px] px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-300 font-mono font-bold border border-amber-400/30">
+              WINDSHIELD QR
+            </span>
           </div>
         </div>
 
-        {/* Vehicle Selector (Owner's Garage) */}
-        {vehicles.length > 0 && (
-          <div className="hidden md:flex items-center gap-2 glass-card px-3.5 py-1.5 rounded-2xl text-xs text-slate-300 border-amber-500/20">
-            <Car className="w-4 h-4 text-amber-400" />
-            <span className="text-slate-500 font-medium">My Vehicle:</span>
-            <select
-              value={selectedVehicleId || ''}
-              onChange={(e) => setSelectedVehicleId(e.target.value)}
-              className="bg-transparent text-amber-300 font-bold focus:outline-none cursor-pointer"
-            >
-              {vehicles.map(v => (
-                <option key={v.id} value={v.id} className="bg-slate-900 text-slate-100">
-                  {v.plateNumber} • {v.makeModel.split(' ')[0]}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-2.5">
-          
-          {/* Quick Scan Button */}
-          {selectedVehicle && (
-            <button
-              onClick={() => openScannerForVehicle(selectedVehicle)}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-semibold shadow-md transition-all hover:scale-105 active:scale-95"
-              title="Simulate scanning this car's windshield QR"
-            >
-              <Camera className="w-4 h-4 text-amber-400" />
-              <span>Simulate Scan</span>
-            </button>
-          )}
-
-          {/* Split Screen Simulator Toggle (For testing & Judges demo!) */}
+        {/* Center Nav Links (Simulator, How it Works, Pitch Deck) */}
+        <nav className="hidden md:flex items-center gap-1.5 lg:gap-3 text-xs font-semibold text-slate-300">
           <button
-            onClick={() => setSimulatorMode(!simulatorMode)}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-lg ${
-              simulatorMode
-                ? 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 border-amber-300 shadow-amber-500/30 scale-105'
-                : 'bg-slate-900/80 hover:bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-400/50'
+            onClick={() => {
+              if (onSelectTab) onSelectTab('simulator');
+              else setSimulatorMode(true);
+            }}
+            className={`px-3 py-1.5 rounded-full transition-all hover:text-amber-300 ${
+              activeTab === 'simulator' ? 'text-amber-400 bg-amber-400/10' : 'hover:bg-slate-800/60'
             }`}
-            title="Toggle Split-Screen Simulator (Scanner Phone vs Owner Dashboard)"
           >
-            <Columns className="w-4 h-4" />
-            <span className="hidden sm:inline">Split Simulator</span>
+            Simulator
           </button>
 
-          {/* Replay Cinematic Starter Intro */}
+          <button
+            onClick={() => onSelectTab && onSelectTab('steps')}
+            className={`px-3 py-1.5 rounded-full transition-all hover:text-amber-300 ${
+              activeTab === 'steps' ? 'text-amber-400 bg-amber-400/10' : 'hover:bg-slate-800/60'
+            }`}
+          >
+            How it Works
+          </button>
+
+          <button
+            onClick={() => openModal('pitchDeck')}
+            className="px-3 py-1.5 rounded-full transition-all hover:text-amber-300 hover:bg-slate-800/60 flex items-center gap-1 text-slate-300"
+          >
+            <Presentation className="w-3.5 h-3.5 text-amber-400" />
+            <span>Pitch Deck</span>
+          </button>
+
           {onReplayIntro && (
             <button
               onClick={onReplayIntro}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 hover:border-amber-400/50 text-slate-300 hover:text-amber-300 text-xs font-semibold shadow-md transition-all hover:scale-105 active:scale-95"
+              className="px-3 py-1.5 rounded-full transition-all hover:text-amber-300 hover:bg-slate-800/60 flex items-center gap-1 text-slate-400"
               title="Replay Cinematic Starter Animation"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <Sparkles className="w-3 h-3 text-amber-400" />
               <span>Intro</span>
             </button>
           )}
+        </nav>
 
-          {/* Pitch Deck (Hackathon Presentation) */}
-          <button
-            onClick={() => openModal('pitchDeck')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold shadow-lg shadow-amber-500/10 transition-all hover:scale-105 active:scale-95"
-            title="Open Hackathon Pitch Presentation Deck"
-          >
-            <Presentation className="w-4 h-4 text-amber-400 animate-bounce" />
-            <span className="hidden md:inline">Pitch Deck</span>
-          </button>
-
-          {/* Add Vehicle */}
+        {/* Right Actions */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          
+          {/* Register Car Button (Golden Pill) */}
           <button
             onClick={() => openModal('registerVehicle')}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 text-xs font-black transition-all shadow-md shadow-amber-500/20 active:scale-95"
+            className="glow-btn-yellow px-4 py-2 rounded-full text-xs font-black transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
           >
-            <PlusCircle className="w-4 h-4 text-slate-950" />
-            <span className="hidden sm:inline">Register Car</span>
+            <PlusCircle className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
+            <span>Register Car</span>
+          </button>
+
+          {/* Active Alert Pill */}
+          <button
+            onClick={() => onSelectTab && onSelectTab('alerts')}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border transition-all ${
+              unresolvedPings.length > 0
+                ? 'bg-amber-400/20 border-amber-400/50 text-amber-300 shadow-md shadow-amber-500/20 animate-pulse'
+                : 'bg-slate-900/60 border-slate-700/80 text-slate-300 hover:border-amber-400/40'
+            }`}
+            title="View Real-Time Move Alerts"
+          >
+            <Bell className={`w-3.5 h-3.5 ${unresolvedPings.length > 0 ? 'text-amber-400 animate-bounce' : 'text-slate-400'}`} />
+            <span className="text-[11px] font-bold">
+              {unresolvedPings.length > 0 ? `${unresolvedPings.length} Active Alert` : '0 Active Alert'}
+            </span>
           </button>
 
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}
-            className="p-2 rounded-xl bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all"
+            className="p-2 rounded-full bg-slate-800/70 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-all"
             title={soundEnabled ? 'Mute Alert Sounds' : 'Enable Alert Sounds'}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
+            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-amber-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
           </button>
 
         </div>
