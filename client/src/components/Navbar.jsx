@@ -11,11 +11,12 @@ import {
   ShieldCheck, 
   Smartphone,
   AlertTriangle,
-  Camera
+  Camera,
+  Sparkles
 } from 'lucide-react';
 import { useParkPing } from '../context/ParkPingContext';
 
-export const Navbar = () => {
+export const Navbar = ({ onReplayIntro }) => {
   const { 
     vehicles, 
     selectedVehicle,
@@ -112,6 +113,18 @@ export const Navbar = () => {
             <Columns className="w-4 h-4" />
             <span className="hidden sm:inline">Split Simulator</span>
           </button>
+
+          {/* Replay Cinematic Starter Intro */}
+          {onReplayIntro && (
+            <button
+              onClick={onReplayIntro}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 hover:border-amber-400/50 text-slate-300 hover:text-amber-300 text-xs font-semibold shadow-md transition-all hover:scale-105 active:scale-95"
+              title="Replay Cinematic Starter Animation"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Intro</span>
+            </button>
+          )}
 
           {/* Pitch Deck (Hackathon Presentation) */}
           <button

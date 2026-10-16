@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParkPing } from './context/ParkPingContext';
 import { Navbar } from './components/Navbar';
 import { HeroBanner } from './components/HeroBanner';
@@ -8,6 +8,8 @@ import { SplitScreenSimulator } from './components/SplitScreenSimulator';
 import { ScannerExperience } from './components/ScannerExperience';
 import { RegisterVehicleModal } from './components/RegisterVehicleModal';
 import { PitchDeckModal } from './components/PitchDeckModal';
+import { StarterAnimation } from './components/StarterAnimation';
+import { ScanRegisteredCarModal } from './components/ScanRegisteredCarModal';
 import { 
   CheckCircle2, 
   AlertCircle, 
@@ -21,7 +23,12 @@ import {
   PhoneCall, 
   MessageSquare,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  BellRing,
+  Columns,
+  Layers,
+  BarChart3,
+  HelpCircle
 } from 'lucide-react';
 
 export default function App() {
@@ -36,170 +43,281 @@ export default function App() {
     simulatorMode 
   } = useParkPing();
 
+  const [showStarter, setShowStarter] = useState(true);
+  const [activeTab, setActiveTab] = useState('decal'); // 'decal' | 'alerts' | 'simulator' | 'steps' | 'metrics'
+
+  const unresolvedPings = activePings.filter(p => p.status === 'delivered');
+
   return (
-    <div className="min-h-screen flex flex-col justify-between text-slate-100">
+    <div className="min-h-screen flex flex-col justify-between text-slate-100 bg-[#06070a]">
       
+      {/* Cinematic Starter Animation Overlay on initial visit or replay */}
+      {showStarter && (
+        <StarterAnimation onComplete={() => setShowStarter(false)} />
+      )}
+
       {/* Top Sticky Header */}
-      <Navbar />
+      <Navbar onReplayIntro={() => setShowStarter(true)} />
 
       {/* Main Page Content */}
       <main className="flex-1 pb-16">
         
-        {/* Hero Section */}
-        <HeroBanner />
+        {/* Simple & Uncluttered Hero Section: Directly showcases the 2 Main Features */}
+        <HeroBanner onSelectTab={setActiveTab} />
 
-        {/* Split Screen Simulator (Interactive Dual View for Hackathon Judging) */}
-        <SplitScreenSimulator />
-
-        {/* Primary Operational Studio: Windshield Decal Studio + Owner Alert Telemetry */}
-        <section className="px-4 lg:px-8 max-w-7xl mx-auto my-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Clean Workspace Tabs (Keeps the Home Page Minimal, Spacious & Uncluttered) */}
+        <section className="px-4 lg:px-8 max-w-7xl mx-auto mt-2 mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
             
-            {/* Left 7 Columns: Decal Studio & Sticker Preview */}
-            <div className="lg:col-span-7">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-xl font-black font-['Space_Grotesk'] text-white flex items-center gap-2">
-                    <QrCode className="w-5 h-5 text-amber-400" />
-                    <span>Smart Windshield Decal Studio</span>
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    Live dynamic QR linked to vehicle {selectedVehicle ? selectedVehicle.plateNumber : ''}. Ready to stick on glass.
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setActiveTab('decal')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                  activeTab === 'decal'
+                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
+                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <QrCode className="w-4 h-4" />
+                <span>My Decal Studio</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('alerts')}
+                className={`relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                  activeTab === 'alerts'
+                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
+                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <BellRing className="w-4 h-4" />
+                <span>Live Move Requests</span>
+                {unresolvedPings.length > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
+                    {unresolvedPings.length}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setActiveTab('simulator')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                  activeTab === 'simulator'
+                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
+                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <Columns className="w-4 h-4" />
+                <span>Dual Simulator</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('steps')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                  activeTab === 'steps'
+                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
+                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span>How It Works</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('metrics')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                  activeTab === 'metrics'
+                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 scale-105'
+                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>Live Metrics</span>
+              </button>
+            </div>
+
+            {/* Quick action button for judges */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => openModal('pitchDeck')}
+                className="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1.5 bg-amber-400/10 hover:bg-amber-400/20 px-3 py-1.5 rounded-xl border border-amber-400/30 transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Hackathon Pitch Deck</span>
+              </button>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Tab 1: Windshield Decal Studio */}
+        {activeTab === 'decal' && (
+          <section className="px-4 lg:px-8 max-w-7xl mx-auto my-6 animate-fadeIn">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-xl font-black font-['Space_Grotesk'] text-white flex items-center gap-2">
+                      <QrCode className="w-5 h-5 text-amber-400" />
+                      <span>Smart Windshield Decal Studio</span>
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      Live dynamic QR linked to vehicle {selectedVehicle ? selectedVehicle.plateNumber : ''}. Ready to stick on glass.
+                    </p>
+                  </div>
+
+                  {selectedVehicle && (
+                    <button
+                      onClick={() => openScannerForVehicle(selectedVehicle)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all hover:scale-105"
+                    >
+                      <span>Simulate Scan</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <WindshieldDecalCard />
+              </div>
+
+              <div className="lg:col-span-4">
+                <div className="glass-panel p-6 rounded-3xl border-slate-800">
+                  <OwnerAlertFeed />
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Tab 2: Owner Alerts Feed */}
+        {activeTab === 'alerts' && (
+          <section className="px-4 lg:px-8 max-w-4xl mx-auto my-6 animate-fadeIn">
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl border-slate-800 shadow-2xl">
+              <OwnerAlertFeed />
+            </div>
+          </section>
+        )}
+
+        {/* Tab 3: Split Screen Simulator (Interactive Dual View for Hackathon Judging) */}
+        {activeTab === 'simulator' && (
+          <section className="animate-fadeIn">
+            <SplitScreenSimulator />
+          </section>
+        )}
+
+        {/* Tab 4: How PingPark Solves Double-Parking: 4 Step Walkthrough */}
+        {activeTab === 'steps' && (
+          <section className="px-4 lg:px-8 max-w-7xl mx-auto my-6 animate-fadeIn">
+            <div className="glass-panel p-8 sm:p-10 rounded-3xl border-slate-800 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl -z-10"></div>
+              
+              <div className="text-center max-w-2xl mx-auto mb-10">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-3">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>The Frictionless Workflow</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-white">
+                  How PingPark Clears Blocked Cars in &lt;90 Seconds
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-2">
+                  No phone number scribbles on paper. No app download for the blocked person. Instant real-time communication.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 transition-all group">
+                  <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    1
+                  </div>
+                  <div className="font-bold text-white text-sm">Stick QR on Windshield</div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Owner registers plate number, customizes decal style, and prints sticker for windshield glass.
                   </p>
                 </div>
 
-                {selectedVehicle && (
-                  <button
-                    onClick={() => openScannerForVehicle(selectedVehicle)}
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/30 text-xs font-semibold transition-all hover:scale-105"
-                  >
-                    <span>Simulate Scan</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                )}
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-yellow-400/50 transition-all group">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-400/20 text-yellow-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    2
+                  </div>
+                  <div className="font-bold text-white text-sm">Blocked Driver Scans</div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Point any phone camera (iPhone or Android) at the decal. Instant mobile interface loads with zero app download.
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 transition-all group">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    3
+                  </div>
+                  <div className="font-bold text-white text-sm">Instant Siren Buzz / Call</div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Tap 1 button to sound urgent horn siren on owner device, or tap direct WhatsApp, phone call or SMS.
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-yellow-400/50 transition-all group">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-300 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    4
+                  </div>
+                  <div className="font-bold text-white text-sm">"On My Way in 2 Mins"</div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Owner replies with 1 click. Blocked driver sees countdown confirmation. Car is moved. Zero road rage.
+                  </p>
+                </div>
+
               </div>
-
-              <WindshieldDecalCard />
             </div>
+          </section>
+        )}
 
-            {/* Right 5 Columns: Owner Incoming Alerts & SSE Telemetry */}
-            <div className="lg:col-span-5">
-              <div className="glass-panel p-6 rounded-3xl border-slate-800 sticky top-24">
-                <OwnerAlertFeed />
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* How PingPark Solves Double-Parking: 4 Step Walkthrough */}
-        <section className="px-4 lg:px-8 max-w-7xl mx-auto my-12">
-          <div className="glass-panel p-8 sm:p-10 rounded-3xl border-slate-800 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl -z-10"></div>
-            
-            <div className="text-center max-w-2xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-3">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>The Frictionless Workflow</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-white">
-                How PingPark Clears Blocked Cars in &lt;3 Minutes
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-400 mt-2">
-                No phone number scribbles on paper. No app download for the blocked person. Instant real-time communication.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Tab 5: Live Metrics Telemetry Bar */}
+        {activeTab === 'metrics' && (
+          <section className="px-4 lg:px-8 max-w-7xl mx-auto my-6 animate-fadeIn">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  1
+              <div className="glass-card p-6 rounded-2xl text-center border-amber-500/20">
+                <div className="text-3xl sm:text-4xl font-black font-['Space_Grotesk'] text-amber-400">
+                  {vehicles.length}
                 </div>
-                <div className="font-bold text-white text-sm">Stick QR on Windshield</div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Owner registers plate number, customizes decal style, and prints sticker for windshield glass.
-                </p>
+                <div className="text-xs font-semibold text-slate-300 mt-1">Registered Vehicles</div>
+                <div className="text-[10px] text-slate-500">Active Windshield Decals</div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-yellow-400/50 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-yellow-400/20 text-yellow-400 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  2
+              <div className="glass-card p-6 rounded-2xl text-center border-yellow-500/20">
+                <div className="text-3xl sm:text-4xl font-black font-['Space_Grotesk'] text-yellow-400">
+                  {analytics ? analytics.totalPings : activePings.length}
                 </div>
-                <div className="font-bold text-white text-sm">Blocked Driver Scans</div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Point any phone camera (iPhone or Android) at the decal. Instant mobile interface loads with zero app download.
-                </p>
+                <div className="text-xs font-semibold text-slate-300 mt-1">Move Alerts Sent</div>
+                <div className="text-[10px] text-slate-500">Real-Time Dispatch</div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  3
+              <div className="glass-card p-6 rounded-2xl text-center border-amber-500/20">
+                <div className="text-3xl sm:text-4xl font-black font-['Space_Grotesk'] text-amber-300">
+                  &lt; 90s
                 </div>
-                <div className="font-bold text-white text-sm">Instant Siren Buzz / Call</div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Tap 1 button to sound urgent horn siren on owner device, or tap direct WhatsApp, phone call or SMS.
-                </p>
+                <div className="text-xs font-semibold text-slate-300 mt-1">Avg Resolution Time</div>
+                <div className="text-[10px] text-slate-500">vs 1-2 Hours Honking</div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-yellow-400/50 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-300 font-black flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  4
+              <div className="glass-card p-6 rounded-2xl text-center border-yellow-500/20">
+                <div className="text-3xl sm:text-4xl font-black font-['Space_Grotesk'] text-yellow-300">
+                  100%
                 </div>
-                <div className="font-bold text-white text-sm">"On My Way in 2 Mins"</div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Owner replies with 1 click. Blocked driver sees countdown confirmation. Car is moved. Zero road rage.
-                </p>
+                <div className="text-xs font-semibold text-slate-300 mt-1">Driver Privacy</div>
+                <div className="text-[10px] text-slate-500">Phone Masking Shield</div>
               </div>
 
             </div>
-          </div>
-        </section>
-
-        {/* Live Metrics Telemetry Bar */}
-        <section className="px-4 lg:px-8 max-w-7xl mx-auto my-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            
-            <div className="glass-card p-5 rounded-2xl text-center border-amber-500/20">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-amber-400">
-                {vehicles.length}
-              </div>
-              <div className="text-xs font-semibold text-slate-300 mt-1">Registered Vehicles</div>
-              <div className="text-[10px] text-slate-500">Active Windshield Decals</div>
-            </div>
-
-            <div className="glass-card p-5 rounded-2xl text-center border-yellow-500/20">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-yellow-400">
-                {analytics ? analytics.totalPings : activePings.length}
-              </div>
-              <div className="text-xs font-semibold text-slate-300 mt-1">Move Alerts Sent</div>
-              <div className="text-[10px] text-slate-500">Real-Time Dispatch</div>
-            </div>
-
-            <div className="glass-card p-5 rounded-2xl text-center border-amber-500/20">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-amber-300">
-                &lt; 90s
-              </div>
-              <div className="text-xs font-semibold text-slate-300 mt-1">Avg Resolution Time</div>
-              <div className="text-[10px] text-slate-500">vs 1-2 Hours Honking</div>
-            </div>
-
-            <div className="glass-card p-5 rounded-2xl text-center border-yellow-500/20">
-              <div className="text-2xl sm:text-3xl font-black font-['Space_Grotesk'] text-yellow-300">
-                100%
-              </div>
-              <div className="text-xs font-semibold text-slate-300 mt-1">Driver Privacy</div>
-              <div className="text-[10px] text-slate-500">Phone Masking Shield</div>
-            </div>
-
-          </div>
-        </section>
+          </section>
+        )}
 
       </main>
 
       {/* Modals */}
       <RegisterVehicleModal />
       <ScannerExperience />
+      <ScanRegisteredCarModal />
       <PitchDeckModal />
 
       {/* Modern Hackathon Footer */}
