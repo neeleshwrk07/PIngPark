@@ -4,3 +4,5 @@ Thumbs.db
 *.log
 .env.local
 ParkPing.zip
+*.pptx
+create_presentation.py
