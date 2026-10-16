@@ -109,3 +109,56 @@ body {
 .barrier-closed {
   transform: rotate(0deg);
 }
+
+/* Print optimization: When printing windshield decal stickers */
+@media print {
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  header, footer, nav, button, .no-print, [role="dialog"], .glass-panel, .glass-card, .fixed, .laser-scanner {
+    display: none !important;
+  }
+
+  .print-cut-guide {
+    display: block !important;
+    text-align: center;
+    font-size: 11px;
+    font-family: monospace;
+    margin: 30px auto 10px auto;
+    color: #475569 !important;
+  }
+
+  .windshield-decal-box {
+    display: block !important;
+    position: static !important;
+    width: 340px !important;
+    margin: 10px auto !important;
+    border: 3px dashed #0f172a !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .windshield-decal-box * {
+    color: #000000 !important;
+    border-color: #333333 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .windshield-decal-header {
+    background: #0f172a !important;
+    color: #ffffff !important;
+  }
+  .windshield-decal-header * {
+    color: #ffffff !important;
+  }
+}

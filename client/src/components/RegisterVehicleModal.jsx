@@ -48,6 +48,11 @@ export const RegisterVehicleModal = () => {
       try {
         confetti({ particleCount: 70, spread: 60 });
       } catch (e) {}
+      setPlateNumber('');
+      setMakeModel('');
+      setOwnerName('');
+      setPhone('');
+      setWhatsapp('');
       closeModal('registerVehicle');
     }
   };

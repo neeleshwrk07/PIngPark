@@ -14,16 +14,20 @@ import {
   Edit3, 
   Palette,
   Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  Trash2,
+  Wifi,
+  Laptop
 } from 'lucide-react';
 import { useParkPing } from '../context/ParkPingContext';
 
 export const WindshieldDecalCard = () => {
-  const { selectedVehicle, updateVehicle, openScannerForVehicle } = useParkPing();
+  const { selectedVehicle, updateVehicle, deleteVehicle, openScannerForVehicle, networkInfo } = useParkPing();
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [activeTheme, setActiveTheme] = useState('cyber');
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [statusNoteText, setStatusNoteText] = useState('');
+  const [qrHostMode, setQrHostMode] = useState('wifi'); // 'wifi' | 'localhost'
   const decalRef = useRef(null);
 
   useEffect(() => {
@@ -31,17 +35,22 @@ export const WindshieldDecalCard = () => {
     setStatusNoteText(selectedVehicle.statusNote || '');
     setActiveTheme(selectedVehicle.decalStyle || 'cyber');
 
-    // Generate dynamic QR image pointing to public vehicle page or token
-    const qrTargetUrl = `${window.location.origin}/?scan=${selectedVehicle.qrCode}`;
+    // Determine target host based on mode (Wi-Fi LAN IP vs localhost)
+    let baseUrl = window.location.origin;
+    if (qrHostMode === 'wifi' && networkInfo && networkInfo.mobileBaseUrl) {
+      baseUrl = networkInfo.mobileBaseUrl;
+    }
+
+    const qrTargetUrl = `${baseUrl}/?scan=${selectedVehicle.qrCode}`;
     QRCode.toDataURL(qrTargetUrl, {
-      width: 260,
+      width: 280,
       margin: 1,
       color: {
         dark: activeTheme === 'minimal' ? '#000000' : '#090e17',
         light: '#ffffff'
       }
     }).then(url => setQrDataUrl(url)).catch(() => {});
-  }, [selectedVehicle, activeTheme]);
+  }, [selectedVehicle, activeTheme, qrHostMode, networkInfo]);
 
   if (!selectedVehicle) {
     return (
@@ -67,6 +76,12 @@ export const WindshieldDecalCard = () => {
       confetti({ particleCount: 60, spread: 60 });
     } catch (e) {}
     window.print();
+  };
+
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to remove ${selectedVehicle.plateNumber} from your garage?`)) {
+      deleteVehicle(selectedVehicle.id);
+    }
   };
 
   // Visual decal themes
@@ -105,24 +120,58 @@ export const WindshieldDecalCard = () => {
       {/* Left: The Physical Windshield Sticker Card */}
       <div className="lg:col-span-6 flex flex-col items-center">
         
-        <div className="text-xs text-slate-400 mb-2 flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Windshield Glass Sticker Preview (Ready to Print)</span>
+        <div className="text-xs text-slate-400 mb-2 flex items-center justify-between w-full max-w-sm px-1">
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Windshield Decal Preview</span>
+          </div>
+
+          {/* Wi-Fi vs Localhost Target Toggle */}
+          <div className="flex items-center gap-1 bg-slate-900/90 px-2 py-0.5 rounded-lg border border-slate-800 text-[10px]">
+            <button
+              onClick={() => setQrHostMode('wifi')}
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-semibold transition-all ${
+                qrHostMode === 'wifi' 
+                  ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30' 
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="QR code encodes your Wi-Fi LAN IP (e.g. 192.168.x.x) so real mobile phone cameras can scan and connect"
+            >
+              <Wifi className="w-3 h-3 text-cyan-400" />
+              <span>Mobile Wi-Fi</span>
+            </button>
+            <button
+              onClick={() => setQrHostMode('localhost')}
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-semibold transition-all ${
+                qrHostMode === 'localhost' 
+                  ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30' 
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Laptop className="w-3 h-3 text-emerald-400" />
+              <span>Local</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Print cutting guide (visible when printed via @media print) */}
+        <div className="print-cut-guide hidden">
+          ✂ Cut along dashed border and affix to inside of front windshield glass
         </div>
 
         {/* The Decal Box */}
         <div 
           ref={decalRef}
-          className={`w-full max-w-sm rounded-[28px] overflow-hidden bg-slate-950 border-2 ${currentStyle.border} shadow-2xl transition-all duration-300 relative`}
+          className={`windshield-decal-box w-full max-w-sm rounded-[28px] overflow-hidden bg-slate-950 border-2 ${currentStyle.border} shadow-2xl transition-all duration-300 relative`}
         >
           {/* Top Decal Banner */}
-          <div className={`${currentStyle.headerBg} p-4 text-center font-black tracking-wide`}>
+          <div className={`windshield-decal-header ${currentStyle.headerBg} p-4 text-center font-black tracking-wide`}>
             <div className="text-[11px] uppercase tracking-widest font-mono">PARKPING VERIFIED DECAL</div>
             <div className="text-sm sm:text-base font-black font-['Space_Grotesk'] mt-0.5">
               BLOCKED BY THIS CAR?
             </div>
             <div className="text-[10px] font-semibold opacity-90">
-              SCAN QR TO CALL / MOVE OWNER
+              SCAN QR TO CALL / BUZZ OWNER
             </div>
           </div>
 
@@ -171,7 +220,7 @@ export const WindshieldDecalCard = () => {
 
           {/* Bottom Decal Footer */}
           <div className="bg-slate-950 p-3 text-center border-t border-slate-800/80 text-[10px] text-slate-500 font-mono">
-            SECURE VEHICLE CONTACT • NO APP REQUIRED TO SCAN
+            SECURE VEHICLE CONTACT • ZERO APP DOWNLOAD NEEDED
           </div>
         </div>
 
@@ -201,10 +250,19 @@ export const WindshieldDecalCard = () => {
         
         {/* Status Mode Box */}
         <div className="glass-panel p-6 rounded-3xl border-slate-800">
-          <h3 className="text-lg font-black text-white font-['Space_Grotesk'] mb-2 flex items-center gap-2">
-            <Car className="w-5 h-5 text-emerald-400" />
-            <span>Current Parking Situation</span>
-          </h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-black text-white font-['Space_Grotesk'] flex items-center gap-2">
+              <Car className="w-5 h-5 text-emerald-400" />
+              <span>Current Parking Situation</span>
+            </h3>
+            <button
+              onClick={handleDelete}
+              className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+              title="Delete this car from your garage"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
           <p className="text-xs text-slate-400 mb-4">
             Update your car's status right now so anyone scanning knows your availability:
           </p>

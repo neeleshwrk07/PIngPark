@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import QRCode from 'qrcode';
 import mongoose from 'mongoose';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 import { dbStore } from './store.js';
 
@@ -38,6 +39,19 @@ try {
   console.log('ℹ️ Operating in standalone high-speed local store mode.');
 }
 
+// Detect local LAN IP for physical mobile phone camera scanning over Wi-Fi
+function getLanIp() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
 // ======================== API ROUTES ========================
 
 // Health & System Info
@@ -45,13 +59,26 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     app: 'ParkPing - Windshield QR Vehicle Contact System',
-    version: '3.0.0',
+    version: '3.1.0',
     mongoConnected,
+    lanIp: getLanIp(),
     timestamp: new Date().toISOString()
   });
 });
 
-// SSE Live Stream for Real-Time Pings between Blocked Driver and Car Owner
+// Network Info (for real mobile camera QR scanning)
+app.get('/api/network-info', (req, res) => {
+  const lanIp = getLanIp();
+  const currentPort = PORT;
+  res.json({
+    lanIp,
+    port: currentPort,
+    mobileBaseUrl: `http://${lanIp}:${currentPort}`,
+    localBaseUrl: `http://localhost:${currentPort}`
+  });
+});
+
+// SSE Live Stream with automatic 15s keep-alive heartbeat
 app.get('/api/events', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -61,7 +88,17 @@ app.get('/api/events', (req, res) => {
   dbStore.addSubscriber(res);
   res.write(`data: ${JSON.stringify({ type: 'CONNECTED', message: 'ParkPing live telemetry ready' })}\n\n`);
 
+  // Heartbeat to prevent socket timeouts
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(': keep-alive\n\n');
+    } catch (e) {
+      clearInterval(heartbeat);
+    }
+  }, 15000);
+
   req.on('close', () => {
+    clearInterval(heartbeat);
     dbStore.removeSubscriber(res);
   });
 });
@@ -217,11 +254,13 @@ app.get('*', (req, res) => {
 
 // Dynamic port listener with auto-fallback
 function startServer(portToTry) {
-  const srv = app.listen(portToTry, () => {
+  const lanIp = getLanIp();
+  const srv = app.listen(portToTry, '0.0.0.0', () => {
     console.log(`\n======================================================`);
-    console.log(`🚀 ParkPing Server is LIVE on port ${portToTry}`);
-    console.log(`🌐 Open in your browser: http://localhost:${portToTry}`);
-    console.log(`📡 Real-Time SSE Endpoint: http://localhost:${portToTry}/api/events`);
+    console.log(`🚀 ParkPing Server is LIVE!`);
+    console.log(`💻 Local access:        http://localhost:${portToTry}`);
+    console.log(`📱 Mobile camera scan:  http://${lanIp}:${portToTry}`);
+    console.log(`📡 Real-Time SSE:       http://localhost:${portToTry}/api/events`);
     console.log(`======================================================\n`);
   });
 

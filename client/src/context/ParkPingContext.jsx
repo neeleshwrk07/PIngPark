@@ -8,6 +8,7 @@ export const ParkPingProvider = ({ children }) => {
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [activePings, setActivePings] = useState([]);
   const [analytics, setAnalytics] = useState(null);
+  const [networkInfo, setNetworkInfo] = useState({ lanIp: 'localhost', mobileBaseUrl: window.location.origin });
   const [scannerVehicle, setScannerVehicle] = useState(null);
   const [scannerSentPing, setScannerSentPing] = useState(null);
   const [simulatorMode, setSimulatorMode] = useState(false);
@@ -18,6 +19,7 @@ export const ParkPingProvider = ({ children }) => {
     registerVehicle: false,
     scannerView: false,
     pitchDeck: false,
+    scanAnyCar: false,
   });
 
   const addToast = useCallback((title, message, type = 'info') => {
@@ -44,14 +46,14 @@ export const ParkPingProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json();
         setVehicles(data);
-        if (data.length > 0 && !selectedVehicleId) {
-          setSelectedVehicleId(data[0].id);
+        if (data.length > 0) {
+          setSelectedVehicleId(prev => (prev && data.some(v => v.id === prev)) ? prev : data[0].id);
         }
       }
     } catch (err) {
       console.error('Error fetching vehicles:', err);
     }
-  }, [selectedVehicleId]);
+  }, []);
 
   // Fetch pings
   const fetchPings = useCallback(async () => {
@@ -79,11 +81,23 @@ export const ParkPingProvider = ({ children }) => {
     }
   }, []);
 
+  // Fetch network info for real phone camera scanning
+  const fetchNetworkInfo = useCallback(async () => {
+    try {
+      const res = await fetch('/api/network-info');
+      if (res.ok) {
+        const data = await res.json();
+        setNetworkInfo(data);
+      }
+    } catch (err) {}
+  }, []);
+
   // Setup SSE and initial data load
   useEffect(() => {
     fetchVehicles();
     fetchPings();
     fetchAnalytics();
+    fetchNetworkInfo();
 
     // Check for ?scan= query parameter on load (when scanned from real camera)
     try {
@@ -97,6 +111,9 @@ export const ParkPingProvider = ({ children }) => {
               setScannerVehicle(data);
               setScannerSentPing(null);
               setModals(prev => ({ ...prev, scannerView: true }));
+              addToast('Windshield QR Scanned', `Loaded details for vehicle ${data.plateNumber}`, 'success');
+            } else {
+              addToast('Scan Notice', `No vehicle registered under QR "${scanCode}"`, 'warning');
             }
           })
           .catch(() => {});
@@ -120,7 +137,13 @@ export const ParkPingProvider = ({ children }) => {
             setScannerSentPing(prev => prev && prev.id === payload.id ? payload : prev);
             addToast('Owner Responded!', `Car owner replied: "${payload.ownerReply}"`, 'success');
             fetchAnalytics();
-          } else if (type === 'VEHICLE_CREATED' || type === 'VEHICLE_UPDATED') {
+          } else if (type === 'PING_RESOLVED') {
+            sound.playSuccess();
+            setActivePings(prev => prev.map(p => p.id === payload.id ? payload : p));
+            setScannerSentPing(prev => prev && prev.id === payload.id ? payload : prev);
+            addToast('Car Moved!', 'Blocked vehicle has been moved and exit is clear.', 'success');
+            fetchAnalytics();
+          } else if (type === 'VEHICLE_CREATED' || type === 'VEHICLE_UPDATED' || type === 'VEHICLE_DELETED') {
             fetchVehicles();
           }
         } catch (err) {}
@@ -130,13 +153,13 @@ export const ParkPingProvider = ({ children }) => {
     const interval = setInterval(() => {
       fetchPings();
       fetchAnalytics();
-    }, 4000);
+    }, 5000);
 
     return () => {
       if (eventSource) eventSource.close();
       clearInterval(interval);
     };
-  }, [fetchVehicles, fetchPings, fetchAnalytics, addToast]);
+  }, [fetchVehicles, fetchPings, fetchAnalytics, fetchNetworkInfo, addToast]);
 
   // Selected vehicle object
   const selectedVehicle = vehicles.find(v => v.id === selectedVehicleId) || vehicles[0];
@@ -157,7 +180,7 @@ export const ParkPingProvider = ({ children }) => {
       }
       sound.playSuccess();
       addToast('Vehicle Registered!', `Windshield QR created for ${data.vehicle.plateNumber}`, 'success');
-      fetchVehicles();
+      await fetchVehicles();
       setSelectedVehicleId(data.vehicle.id);
       return { success: true, vehicle: data.vehicle };
     } catch (err) {
@@ -178,6 +201,21 @@ export const ParkPingProvider = ({ children }) => {
       addToast('Vehicle Updated', 'Settings & status saved successfully', 'info');
       fetchVehicles();
       return { success: true, vehicle: data.vehicle };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  const deleteVehicle = async (id) => {
+    sound.playClick();
+    try {
+      const res = await fetch(`/api/vehicles/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) return { success: false, error: data.error };
+      sound.playSuccess();
+      addToast('Vehicle Removed', 'Vehicle was removed from your garage', 'info');
+      fetchVehicles();
+      return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -224,6 +262,22 @@ export const ParkPingProvider = ({ children }) => {
     }
   };
 
+  const resolvePing = async (pingId) => {
+    sound.playClick();
+    try {
+      const res = await fetch(`/api/ping/${pingId}/resolve`, { method: 'PUT' });
+      const data = await res.json();
+      if (!res.ok) return { success: false, error: data.error };
+      sound.playSuccess();
+      addToast('Exit Cleared!', 'Marked alert as resolved (car moved)', 'success');
+      fetchPings();
+      fetchAnalytics();
+      return { success: true, ping: data.ping };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
   const openScannerForVehicle = (vehicle) => {
     setScannerVehicle(vehicle);
     setScannerSentPing(null);
@@ -244,6 +298,7 @@ export const ParkPingProvider = ({ children }) => {
       setSelectedVehicleId,
       activePings,
       analytics,
+      networkInfo,
       scannerVehicle,
       setScannerVehicle,
       scannerSentPing,
@@ -258,8 +313,10 @@ export const ParkPingProvider = ({ children }) => {
       closeModal,
       registerVehicle,
       updateVehicle,
+      deleteVehicle,
       sendPing,
       replyToPing,
+      resolvePing,
       openScannerForVehicle
     }}>
       {children}

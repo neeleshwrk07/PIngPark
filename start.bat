@@ -18,7 +18,8 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo [2/3] Checking network ports...
-powershell -Command "Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }" >nul 2>nul
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5000') do taskkill /f /pid %%a >nul 2>nul
+
 
 echo [3/3] Starting ParkPing Server...
 echo.

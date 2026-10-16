@@ -13,12 +13,12 @@ import {
   Clock, 
   Sparkles,
   Zap,
-  Volume2
+  RotateCcw
 } from 'lucide-react';
 import { useParkPing } from '../context/ParkPingContext';
 
 export const ScannerExperience = ({ vehicleOverride = null, isEmbedded = false, onClose = null }) => {
-  const { scannerVehicle, selectedVehicle, sendPing, scannerSentPing, modals, closeModal } = useParkPing();
+  const { scannerVehicle, selectedVehicle, sendPing, scannerSentPing, setScannerSentPing, modals, closeModal } = useParkPing();
 
   const vehicle = vehicleOverride || scannerVehicle || selectedVehicle;
 
@@ -64,6 +64,61 @@ export const ScannerExperience = ({ vehicleOverride = null, isEmbedded = false, 
     { id: 'EMERGENCY', label: '🚑 Scratched / Emergency', icon: BellRing },
   ];
 
+  const renderContactOptions = (isCompact = false) => {
+    if (vehicle.privacyMode === 'anonymous_ping_only') {
+      return (
+        <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 text-xs flex items-center gap-2.5">
+          <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0" />
+          <div>
+            <div className="font-bold text-white">Owner Privacy Shield Active</div>
+            <div className="text-[11px] text-cyan-300/80">Phone number is hidden for privacy. Tap the buzzer alert above to sound the owner's car horn siren directly!</div>
+          </div>
+        </div>
+      );
+    }
+
+    if (vehicle.privacyMode === 'whatsapp_only') {
+      return (
+        <div className="space-y-1.5">
+          <div className="text-[11px] text-slate-400 font-semibold flex items-center gap-1.5">
+            <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Owner Contact (WhatsApp Preferred):</span>
+          </div>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.01]"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Message Owner via WhatsApp</span>
+          </a>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-2 gap-2">
+        <a
+          href={telUrl}
+          className={`${isCompact ? 'py-2.5' : 'py-3'} px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all hover:scale-[1.01]`}
+        >
+          <PhoneCall className="w-4 h-4 text-emerald-400" />
+          <span>Call Owner</span>
+        </a>
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`${isCompact ? 'py-2.5' : 'py-3'} px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.01]`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>WhatsApp</span>
+        </a>
+      </div>
+    );
+  };
+
   const content = (
     <div className="space-y-5 animate-fadeIn">
       
@@ -105,10 +160,10 @@ export const ScannerExperience = ({ vehicleOverride = null, isEmbedded = false, 
             </div>
             <div>
               <div className="font-black text-sm text-white font-['Space_Grotesk']">
-                Ping Delivered to Owner!
+                Move Alert Sent to Owner!
               </div>
               <div className="text-[11px] text-slate-400">
-                Owner's phone buzzed with your move request
+                Owner's device has buzzed with your request
               </div>
             </div>
           </div>
@@ -136,26 +191,18 @@ export const ScannerExperience = ({ vehicleOverride = null, isEmbedded = false, 
 
           {/* Alternate Direct Contact Links */}
           <div className="pt-2 border-t border-slate-800 space-y-2">
-            <div className="text-[11px] text-slate-400 font-semibold">Need even faster response? Contact directly:</div>
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                href={telUrl}
-                className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-700"
-              >
-                <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Call Owner</span>
-              </a>
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20"
-              >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>WhatsApp</span>
-              </a>
-            </div>
+            <div className="text-[11px] text-slate-400 font-semibold">Fast direct contact options:</div>
+            {renderContactOptions(true)}
           </div>
+
+          {/* Reset / Send Another Alert */}
+          <button
+            onClick={() => setScannerSentPing(null)}
+            className="w-full py-2 rounded-xl bg-slate-800/60 hover:bg-slate-700 text-slate-400 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Send Follow-up Note or Report Another Issue</span>
+          </button>
         </div>
       ) : (
         /* The Ping Form */
@@ -213,33 +260,15 @@ export const ScannerExperience = ({ vehicleOverride = null, isEmbedded = false, 
             <span>{isSending ? 'Transmitting Ping...' : '🚨 Buzz Owner to Move Car'}</span>
           </button>
 
-          {/* Or Direct Calling Options */}
+          {/* Direct Contact Options with Privacy Shield Guard */}
           <div className="pt-2">
             <div className="flex items-center gap-3 my-2 text-[10px] text-slate-500">
               <div className="flex-1 h-px bg-slate-800"></div>
-              <span>OR DIRECT INSTANT CONTACT</span>
+              <span>DIRECT CONTACT CHANNELS</span>
               <div className="flex-1 h-px bg-slate-800"></div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                href={telUrl}
-                className="py-3 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all"
-              >
-                <PhoneCall className="w-4 h-4 text-emerald-400" />
-                <span>Call Owner</span>
-              </a>
-
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition-all"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>WhatsApp</span>
-              </a>
-            </div>
+            {renderContactOptions(false)}
           </div>
 
         </div>

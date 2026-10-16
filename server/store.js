@@ -167,6 +167,9 @@ class ParkPingStore {
   }
 
   createVehicle({ plateNumber, makeModel, vehicleType, ownerName, phone, whatsapp, email, altPhone, statusNote, privacyMode, decalStyle }) {
+    if (!plateNumber || typeof plateNumber !== 'string' || !plateNumber.trim()) {
+      return { error: 'Valid license plate number is required!' };
+    }
     const cleanPlate = plateNumber.trim().toUpperCase();
     const qrCode = `PING-${cleanPlate.replace(/[^A-Z0-9]/g, '')}`;
 
