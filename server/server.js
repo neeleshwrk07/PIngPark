@@ -18,6 +18,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/parkping';
 
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -66,14 +68,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Network Info (for real mobile camera QR scanning)
+// Network Info (for real mobile camera QR scanning, local Wi-Fi & cloud production)
 app.get('/api/network-info', (req, res) => {
   const lanIp = getLanIp();
   const currentPort = PORT;
+  const host = req.get('host') || `localhost:${currentPort}`;
+  const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
+  const publicBaseUrl = `${protocol}://${host}`;
+  const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+  const mobileBaseUrl = isLocal ? `http://${lanIp}:${currentPort}` : publicBaseUrl;
+
   res.json({
     lanIp,
     port: currentPort,
-    mobileBaseUrl: `http://${lanIp}:${currentPort}`,
+    isLocal,
+    publicBaseUrl,
+    mobileBaseUrl,
     localBaseUrl: `http://localhost:${currentPort}`
   });
 });

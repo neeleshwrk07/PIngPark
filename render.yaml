@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: pingpark
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm run render-build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20.12.2
+      - key: PORT
+        value: 10000

@@ -99,10 +99,13 @@ export const ParkPingProvider = ({ children }) => {
     fetchAnalytics();
     fetchNetworkInfo();
 
-    // Check for ?scan= query parameter on load (when scanned from real camera)
+    // Check for ?scan= query parameter or /scan/:code path on load
     try {
       const params = new URLSearchParams(window.location.search);
-      const scanCode = params.get('scan') || params.get('qr');
+      let scanCode = params.get('scan') || params.get('qr');
+      if (!scanCode && window.location.pathname.startsWith('/scan/')) {
+        scanCode = window.location.pathname.replace(/^\/scan\//, '').trim();
+      }
       if (scanCode) {
         fetch(`/api/vehicles/${encodeURIComponent(scanCode)}`)
           .then(res => res.json())

@@ -1,12 +1,18 @@
 {
-  "name": "parkping-smart-parking-qr",
+  "name": "pingpark",
   "version": "1.0.0",
-  "description": "ParkPing - Next-Gen Smart QR Parking & Micro-Mobility Platform",
+  "description": "PingPark - Smart Windshield QR & Real-Time Double-Parking Contact Platform",
   "private": true,
+  "type": "module",
   "scripts": {
+    "render-build": "npm --prefix server install && npm --prefix client install && npm --prefix client run build",
+    "build": "npm run render-build",
     "start": "node server/server.js",
     "dev:server": "node --watch server/server.js",
-    "dev:client": "cd client && npm run dev",
-    "build": "cd client && npm run build"
+    "dev:client": "npm --prefix client run dev",
+    "dev": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

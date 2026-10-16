@@ -35,10 +35,17 @@ export const WindshieldDecalCard = () => {
     setStatusNoteText(selectedVehicle.statusNote || '');
     setActiveTheme(selectedVehicle.decalStyle || 'gold');
 
-    // Determine target host based on mode (Wi-Fi LAN IP vs localhost)
+    // Determine target host based on environment (Render cloud public URL vs local Wi-Fi vs localhost)
     let baseUrl = window.location.origin;
-    if (qrHostMode === 'wifi' && networkInfo && networkInfo.mobileBaseUrl) {
-      baseUrl = networkInfo.mobileBaseUrl;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (isLocal) {
+      if (qrHostMode === 'wifi' && networkInfo && networkInfo.mobileBaseUrl) {
+        baseUrl = networkInfo.mobileBaseUrl;
+      }
+    } else {
+      // In cloud production (Render), always use the live public HTTPS domain
+      baseUrl = window.location.origin;
     }
 
     const qrTargetUrl = `${baseUrl}/?scan=${selectedVehicle.qrCode}`;
